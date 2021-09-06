@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:http/http.dart' as http;
 
@@ -23,7 +24,7 @@ Future<List<GitHubCard>> getGitHubCards(
   List jsonCards = jsonDecode(response.body);
 
   final gitHubCards = jsonCards.map((jsonCard) {
-    return GitHubCard.fromJson(jsonCard);
+    return GitHubCard.fromJson(jsonCard, gitHubToken);
   }).toList();
 
   return gitHubCards;
@@ -86,8 +87,12 @@ Future<void> deleteTrelloCard(String id) async {
   await http.delete(uri);
 }
 
-Future<void> main() async {
-  const githubApiToken = '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';
+Future<void> main(List<String> args) async {
+  final file = File(args[0]);
+  final settingsJson = file.readAsStringSync();
+  final body = jsonDecode(settingsJson);
+
+  final githubApiToken = body['github_api_token'];
   final gitHubColumns = {
     'To Do': '/projects/columns/15793814/cards',
     'In Progress': '/projects/columns/15793815/cards',
@@ -157,13 +162,12 @@ class GitHubCard extends Card {
   String contentUrl = '';
   Future<String> _content = Future<String>.value('');
 
-  GitHubCard.fromJson(Map<String, dynamic> json) {
+  GitHubCard.fromJson(Map<String, dynamic> json, String githubApiToken) {
     if (json.containsKey('note') && json['note'] != null) {
       note = json['note'];
     }
     if (json.containsKey('content_url')) {
       contentUrl = json['content_url'];
-      const githubApiToken = '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';
       var headers = {
         'Authorization': 'token $githubApiToken',
         'Accept': 'application/vnd.github.inertia-preview'
