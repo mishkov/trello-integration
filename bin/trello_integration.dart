@@ -87,7 +87,7 @@ Future<void> deleteTrelloCard(String id) async {
 }
 
 Future<void> main() async {
-  const githubApiToken = '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';
+  const githubApiToken = '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';
   final gitHubColumns = {
     'To Do': '/projects/columns/15793814/cards',
     'In Progress': '/projects/columns/15793815/cards',
@@ -163,7 +163,7 @@ class GitHubCard extends Card {
     }
     if (json.containsKey('content_url')) {
       contentUrl = json['content_url'];
-      const githubApiToken = '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';
+      const githubApiToken = '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';
       var headers = {
         'Authorization': 'token $githubApiToken',
         'Accept': 'application/vnd.github.inertia-preview'
